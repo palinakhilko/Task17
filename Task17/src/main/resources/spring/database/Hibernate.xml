@@ -1,0 +1,64 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    
+	
+	<!-- Hibernate session factory -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean" scope="singleton">
+    	<property name="dataSource">
+    		<ref bean="dataSource"/>
+    	</property>
+    	<property name="hibernateProperties">
+    		<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.current_session_context_class">thread</prop>
+			</props>
+    	</property>	
+		<property name="packagesToScan" value="com.epam.shop" />
+		<property name="annotatedClasses">
+			<list>
+				<value>com.epam.shop.model.Product</value>
+				<value>com.epam.shop.model.User</value>
+				<value>com.epam.shop.model.Address</value>
+				<value>com.epam.shop.model.UserLoyaltyProgram</value>
+				<value>com.epam.shop.model.UserPersonal</value>
+			</list>
+		</property>
+    </bean>
+<bean id="transactionManager" 
+            class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+    <property name="sessionFactory" ref="sessionFactory"/>
+  </bean>
+  
+  <bean id="productService" factory-bean="serviceFactory" factory-method="createProductService">
+	<property name="productDAO" ref="productDAO" />
+</bean>
+ 
+<bean id="productDAO" class="com.epam.shop.dao.ProductDAO">
+	<property name="sessionFactory" ref="sessionFactory" />
+</bean>
+  
+<bean id="loyaltyProgramService" factory-bean="serviceFactory" factory-method="createLoyaltyService">
+	<property name="loyaltyDAO" ref="loyaltyDAO" />
+</bean>
+ 
+<bean id="loyaltyDAO" class="com.epam.shop.dao.UserLoyaltyProgramDAO">
+	<property name="sessionFactory" ref="sessionFactory" />
+</bean>
+<bean id="userService"  factory-bean="serviceFactory" factory-method="createUserService">
+	<property name="userDAO" ref="userDAO" />
+</bean>
+<bean id="userDAO" class="com.epam.shop.dao.UserDAO">
+	<property name="sessionFactory" ref="sessionFactory" />
+</bean>
+<bean id="personalService" factory-bean="serviceFactory" factory-method="createUserPersonalService">
+	<property name="userPersonalDAO" ref="userPersonalDAO" />
+</bean>
+<bean id="userPersonalDAO" class="com.epam.shop.dao.UserPersonalDAO">
+	<property name="sessionFactory" ref="sessionFactory" />
+</bean>
+<bean id="serviceFactory" class="com.epam.shop.service.ServiceFactory" factory-method="createInstance">
+</bean>
+</beans>    
